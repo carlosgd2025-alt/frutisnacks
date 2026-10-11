@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FrutiSnacks | Porque la vida es mejor con fruta</title>
+<meta name="description" content="FrutiSnacks: vasos de fruta fresca. Arma tu pedido, juega a descubrir tu fruta y pídelo por WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rosa:#ff2e88; --rosa-osc:#c4125f;
+    --verde:#2f9e44; --verde-osc:#1f7030;
+    --amarillo:#ffe43a; --naranja:#ff8a1f;
+    --crema:#fffaf3; --tinta:#1b1b1b; --suave:#6b6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{font-family:'Nunito',sans-serif;background:var(--crema);color:var(--tinta);line-height:1.6;overflow-x:hidden}
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+  .wrap{width:min(1120px,92%);margin-inline:auto}
+ 
+  /* ---------- BOTONES ---------- */
+  .btn{display:inline-block;border:0;cursor:pointer;font-weight:900;background:var(--rosa);color:#fff;padding:13px 28px;border-radius:999px;box-shadow:0 6px 0 var(--rosa-osc);transition:.15s;text-align:center}
+  .btn:hover{transform:translateY(3px);box-shadow:0 3px 0 var(--rosa-osc)}
+  .btn.verde{background:var(--verde);box-shadow:0 6px 0 var(--verde-osc)}
+  .btn.verde:hover{box-shadow:0 3px 0 var(--verde-osc)}
+  .btn.blanco{background:#fff;color:var(--rosa);box-shadow:0 6px 0 rgba(0,0,0,.2)}
+  .btn.chico{padding:9px 20px;font-size:.92rem;box-shadow:0 4px 0 var(--rosa-osc)}
+  .btn.grande{font-size:1.12rem;padding:15px 36px}
+  .btn.wa{background:#25d366;box-shadow:0 6px 0 #168a43}
+ 
+  /* ---------- PROGRESO / AVISO / NAV ---------- */
+  #progreso{position:fixed;top:0;left:0;height:5px;width:0;background:linear-gradient(90deg,var(--rosa),var(--naranja),var(--amarillo),var(--verde));z-index:60}
+  .aviso{background:var(--tinta);color:#fff;text-align:center;font-weight:800;font-size:.9rem;padding:8px 10px}
+  .aviso b{color:var(--amarillo)}
+  header{position:sticky;top:0;z-index:40;background:rgba(255,250,243,.94);backdrop-filter:blur(8px);border-bottom:3px solid #f3e6d3}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:14px}
+  .marca{font-family:'Caveat Brush',cursive;font-size:2.1rem;line-height:1}
+  .marca b{color:var(--rosa);font-weight:400}
+  nav ul{display:flex;gap:20px;list-style:none;font-weight:800}
+  nav ul a{position:relative}
+  nav ul a::after{content:"";position:absolute;left:0;bottom:-3px;height:3px;width:0;background:var(--rosa);border-radius:3px;transition:.2s}
+  nav ul a:hover::after{width:100%}
+  .nav-der{display:flex;align-items:center;gap:10px}
+  #btn-cart{position:relative;padding:10px 20px}
+  #badge{position:absolute;top:-8px;right:-6px;background:var(--amarillo);color:var(--tinta);min-width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+  #hamb{display:none;background:#fff;border:3px solid #f3e6d3;border-radius:12px;padding:6px 12px;font-size:1.3rem;cursor:pointer}
+ 
+  /* ---------- HERO ---------- */
+  .hero{position:relative;padding:56px 0 120px;background:linear-gradient(135deg,#fff0f7 0%,#fff9d6 55%,#e6f8e9 100%);overflow:hidden}
+  .hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+  .abierto{display:inline-flex;align-items:center;gap:8px;background:#fff;border:3px solid #f3e6d3;border-radius:999px;padding:5px 16px;font-weight:900;font-size:.9rem;margin-bottom:16px}
+  .abierto i{width:12px;height:12px;border-radius:50%;background:#aaa;display:inline-block}
+  .abierto.si i{background:#25d366;animation:pulsoPunto 1.8s infinite}
+  .abierto.no i{background:#e53935}
+  @keyframes pulsoPunto{0%{box-shadow:0 0 0 0 rgba(37,211,102,.7)}100%{box-shadow:0 0 0 12px rgba(37,211,102,0)}}
+  .hero h1{font-family:'Caveat Brush',cursive;font-weight:400;font-size:clamp(2.8rem,6.4vw,5rem);line-height:1}
+  .hero h1 span{color:var(--rosa)}
+  .hero h1 mark{background:var(--amarillo);padding:0 .15em;border-radius:8px;display:inline-block;transform:rotate(-2deg)}
+  .hero p.lead{margin:20px 0 28px;font-size:1.2rem;color:#555;max-width:48ch}
+  .acciones{display:flex;gap:18px;flex-wrap:wrap}
+  .stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+  .stat{background:#fff;border:3px solid #f3e6d3;border-radius:20px;padding:8px 18px;text-align:center;min-width:92px}
+  .stat b{display:block;font-family:'Caveat Brush',cursive;font-weight:400;font-size:2rem;line-height:1.1;color:var(--rosa)}
+  .stat span{font-size:.8rem;font-weight:800;color:var(--suave)}
+  .logo-box{position:relative;display:flex;justify-content:center}
+  .logo-box img{width:min(440px,100%);border-radius:32px;box-shadow:0 22px 50px rgba(255,46,136,.28);background:#fff;animation:flota 5s ease-in-out infinite}
+  .logo-fallback{display:none;font-family:'Caveat Brush',cursive;font-size:4.4rem;text-align:center;padding:60px 30px;background:#fff;border-radius:32px;box-shadow:0 22px 50px rgba(255,46,136,.28)}
+  .logo-fallback b{color:var(--rosa);font-weight:400}
+  .sello{position:absolute;right:-6px;bottom:-26px;width:116px;height:116px;border-radius:50%;background:var(--amarillo);display:grid;place-items:center;text-align:center;font-weight:900;font-size:.88rem;line-height:1.15;border:4px dashed var(--rosa);animation:gira 14s linear infinite;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+  .sello span{display:block;animation:giraInv 14s linear infinite}
+  .sello b{display:block;font-size:1.5rem;font-family:'Caveat Brush',cursive;font-weight:400;color:var(--rosa)}
+  .fruta-flota{position:absolute;font-size:2.6rem;opacity:.9;z-index:1;animation:sube 7s ease-in-out infinite;filter:drop-shadow(0 6px 6px rgba(0,0,0,.15))}
+  .f1{left:4%;top:14%}.f2{left:44%;top:6%;animation-delay:-2s;font-size:2rem}.f3{right:4%;top:12%;animation-delay:-4s}
+  .f4{left:8%;bottom:20%;animation-delay:-1s;font-size:2.2rem}.f5{right:10%;bottom:22%;animation-delay:-3s;font-size:3rem}.f6{left:48%;bottom:16%;animation-delay:-5s;font-size:2rem}
+  .ola{position:absolute;left:0;right:0;bottom:-1px;line-height:0;z-index:3}
+  .ola svg{width:100%;height:70px;display:block}
+  @keyframes flota{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-12px) rotate(1.5deg)}}
+  @keyframes sube{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-22px) rotate(10deg)}}
+  @keyframes gira{to{transform:rotate(360deg)}}
+  @keyframes giraInv{to{transform:rotate(-360deg)}}
+ 
+  /* ---------- CINTA ---------- */
+  .cinta{background:var(--rosa);color:#fff;font-weight:900;overflow:hidden;white-space:nowrap;transform:rotate(-1.2deg);margin:-14px -10px 0;position:relative;z-index:4;box-shadow:0 8px 18px rgba(0,0,0,.12)}
+  .cinta div{display:inline-block;padding:14px 0;animation:marquee 30s linear infinite;font-size:1.1rem}
+  .cinta span{margin:0 28px}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+ 
+  /* ---------- GENERAL ---------- */
+  section{padding:84px 0;position:relative}
+  h2{font-family:'Caveat Brush',cursive;font-weight:400;font-size:clamp(2.4rem,5.4vw,3.6rem);text-align:center;line-height:1.05}
+  h2 span{color:var(--rosa)}
+  .sub{text-align:center;color:var(--suave);max-width:58ch;margin:12px auto 44px;font-size:1.05rem}
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.on{opacity:1;transform:none}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}
+ 
+  /* ---------- GALERÍA ---------- */
+  .galeria .marco{position:relative;width:min(780px,100%);margin-inline:auto}
+  .galeria img{border-radius:30px;box-shadow:0 22px 50px rgba(0,0,0,.2);width:100%;border:8px solid #fff;transform:rotate(-1deg);transition:.3s;cursor:zoom-in}
+  .galeria img:hover{transform:rotate(0) scale(1.02)}
+  .cinta-pegada{position:absolute;top:-16px;left:50%;translate:-50% 0;background:var(--amarillo);padding:6px 24px;font-family:'Caveat Brush',cursive;font-size:1.6rem;border-radius:8px;rotate:-3deg;box-shadow:0 5px 10px rgba(0,0,0,.15);z-index:2;white-space:nowrap}
+  #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:80;display:none;place-items:center;padding:20px;cursor:zoom-out}
+  #lightbox.on{display:grid}
+  #lightbox img{max-height:92vh;border-radius:18px}
+ 
+  /* ---------- MENÚ ---------- */
+  .menu{background:#fff}
+  .card{background:var(--crema);border:3px solid #f3e6d3;border-radius:28px;padding:14px 14px 22px;text-align:center;transition:.25s}
+  .card:hover{transform:translateY(-10px) rotate(-1.5deg);border-color:var(--rosa);box-shadow:0 18px 30px rgba(255,46,136,.18)}
+  .foto{position:relative;aspect-ratio:1/1;border-radius:20px;display:grid;place-items:center;font-size:4.5rem;overflow:hidden;background:#fff}
+  .foto::after{content:"";position:absolute;inset:0;background-image:url("vasos.png");background-repeat:no-repeat;background-size:260% auto;transition:transform .4s}
+  .card:hover .foto::after{transform:scale(1.08)}
+  .foto.manzana{background:#ffe3e3}.foto.manzana::after{background-position:0% 22%}
+  .foto.melon{background:#ffe9d1}.foto.melon::after{background-position:51% 22%}
+  .foto.pina{background:#fff6b8}.foto.pina::after{background-position:100% 22%}
+  .foto.sandia{background:#ffd9d9}.foto.sandia::after{background-position:23% 81%}
+  .foto.mango{background:#ffdcc2}.foto.mango::after{background-position:78% 81%}
+  .card h3{font-family:'Caveat Brush',cursive;font-weight:400;font-size:1.9rem;margin:14px 0 2px}
+  .card p{font-size:.95rem;color:var(--suave);padding:0 6px}
+  .etq{display:inline-block;margin-top:10px;background:var(--amarillo);font-weight:900;font-size:.8rem;padding:4px 14px;border-radius:999px}
+  .card select{margin-top:14px;width:100%;border:3px solid #eee;border-radius:14px;padding:8px 10px;font-weight:800;background:#fff;cursor:pointer}
+  .card .btn{margin-top:12px;width:100%}
+  .precio{font-weight:900;color:var(--rosa);margin-top:8px;min-height:1.6em}
+ 
+  /* ---------- ARMA TU VASO ---------- */
+  .arma{background:linear-gradient(160deg,var(--verde) 0%,#47b85c 100%);color:#fff}
+  .arma h2 span{color:var(--amarillo)}
+  .arma .sub{color:#e9ffee}
+  .constructor{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:start}
+  .panel{background:#fff;color:var(--tinta);border-radius:30px;padding:28px;box-shadow:0 18px 40px rgba(0,0,0,.2)}
+  .paso{margin-bottom:22px}
+  .paso:last-child{margin-bottom:0}
+  .paso h3{font-size:1.05rem;margin-bottom:10px}
+  .paso h3 i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--rosa);color:#fff;margin-right:8px;font-size:.9rem}
+  .opciones{display:flex;gap:10px;flex-wrap:wrap}
+  .opciones input{position:absolute;opacity:0;pointer-events:none}
+  .opciones label{cursor:pointer;border:3px solid #eee;border-radius:16px;padding:8px 16px;font-weight:800;background:#fafafa;transition:.15s;user-select:none}
+  .opciones label:hover{border-color:var(--rosa)}
+  .opciones input:checked + label{background:var(--rosa);border-color:var(--rosa);color:#fff;transform:scale(1.05)}
+  .opciones input:focus-visible + label{outline:3px solid var(--amarillo)}
+  .cantidad{display:inline-flex;align-items:center;gap:14px;background:#fafafa;border:3px solid #eee;border-radius:999px;padding:4px}
+  .cantidad button{width:38px;height:38px;border-radius:50%;border:0;background:var(--verde);color:#fff;font-size:1.3rem;font-weight:900;cursor:pointer}
+  .cantidad output{min-width:26px;text-align:center;font-weight:900;font-size:1.2rem}
+  .resumen{text-align:center;position:sticky;top:96px}
+  .resumen .gran{font-size:6rem;line-height:1;animation:flota 4s ease-in-out infinite}
+  .resumen h3{font-family:'Caveat Brush',cursive;font-weight:400;font-size:2rem;color:var(--rosa);margin:6px 0}
+  .resumen p{color:var(--suave);margin-bottom:18px;min-height:3.2em}
+  .resumen .btn{display:block;width:100%;margin-top:12px}
+ 
+  /* ---------- COMBOS ---------- */
+  .combos .grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .combo{position:relative;border-radius:30px;padding:34px 26px 30px;text-align:center;color:#fff;overflow:hidden;transition:.25s}
+  .combo:hover{transform:translateY(-8px)}
+  .combo.c1{background:linear-gradient(145deg,#ff2e88,#ff6fb0)}
+  .combo.c2{background:linear-gradient(145deg,#ff8a1f,#ffc13b)}
+  .combo.c3{background:linear-gradient(145deg,#2f9e44,#62cf74)}
+  .combo .big{font-size:3.6rem;line-height:1}
+  .combo h3{font-family:'Caveat Brush',cursive;font-weight:400;font-size:2.2rem;margin:8px 0 4px}
+  .combo ul{list-style:none;margin:10px 0 20px;font-weight:700}
+  .combo ul li::before{content:"✔ "}
+  .combo .tag{position:absolute;top:16px;right:-34px;rotate:35deg;background:var(--amarillo);color:var(--tinta);font-weight:900;font-size:.75rem;padding:4px 42px}
+  .combo .btn{background:#fff;color:var(--tinta);box-shadow:0 5px 0 rgba(0,0,0,.2)}
+ 
+  /* ---------- QUIZ ---------- */
+  .quiz{background:linear-gradient(135deg,#fff0f7,#fff9d6)}
+  .quiz-box{max-width:720px;margin-inline:auto;background:#fff;border-radius:34px;padding:34px 28px;box-shadow:0 18px 44px rgba(0,0,0,.12);text-align:center;border:4px solid #fff}
+  .quiz-prog{height:10px;background:#f1e6d6;border-radius:99px;overflow:hidden;margin-bottom:22px}
+  .quiz-prog div{height:100%;width:0;background:linear-gradient(90deg,var(--rosa),var(--naranja));transition:.4s}
+  .quiz-box h3{font-size:1.4rem;margin-bottom:20px}
+  .quiz-ops{display:grid;gap:12px}
+  .quiz-ops button{background:var(--crema);border:3px solid #f3e6d3;border-radius:18px;padding:14px 18px;font-weight:800;cursor:pointer;transition:.15s;font-size:1rem}
+  .quiz-ops button:hover{border-color:var(--rosa);background:#fff0f7;transform:scale(1.02)}
+  .res-emoji{font-size:6rem;line-height:1;animation:flota 3.5s ease-in-out infinite}
+  .res-nombre{font-family:'Caveat Brush',cursive;font-size:2.8rem;color:var(--rosa);line-height:1.1;margin:8px 0}
+  .res-botones{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+ 
+  /* ---------- RULETA ---------- */
+  .ruleta{background:var(--tinta);color:#fff}
+  .ruleta h2 span{color:var(--amarillo)}
+  .ruleta .sub{color:#ccc}
+  .tragamonedas{display:flex;justify-content:center;gap:16px;margin-bottom:26px}
+  .slot{width:min(120px,26vw);aspect-ratio:1/1.1;background:#fff;color:var(--tinta);border-radius:22px;display:grid;place-items:center;font-size:clamp(2.6rem,10vw,4.4rem);border:5px solid var(--amarillo);box-shadow:inset 0 -10px 18px rgba(0,0,0,.12)}
+  .slot.gira{animation:tiembla .12s infinite}
+  @keyframes tiembla{0%,100%{transform:translateY(-3px)}50%{transform:translateY(3px)}}
+  .ruleta-res{text-align:center;min-height:3.4em;font-weight:800;font-size:1.15rem;margin-bottom:18px}
+  .ruleta-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+ 
+  /* ---------- DATOS FRUTALES ---------- */
+  .datos-box{max-width:760px;margin-inline:auto;position:relative}
+  .dato{display:none;background:#fff;border:3px solid #f3e6d3;border-radius:30px;padding:34px 28px;text-align:center;animation:entra .5s}
+  .dato.on{display:block}
+  @keyframes entra{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+  .dato .e{font-size:4.4rem;line-height:1}
+  .dato h3{font-family:'Caveat Brush',cursive;font-weight:400;font-size:2rem;color:var(--verde);margin:8px 0 4px}
+  .dato p{color:var(--suave);font-size:1.08rem;max-width:46ch;margin-inline:auto}
+  .puntos{display:flex;justify-content:center;gap:10px;margin-top:18px}
+  .puntos button{width:14px;height:14px;border-radius:50%;border:0;background:#e5d9c7;cursor:pointer;transition:.2s}
+  .puntos button.on{background:var(--rosa);transform:scale(1.35)}
+ 
+  /* ---------- TOPPINGS / RAZONES ---------- */
+  .toppings{background:#fff}
+  .tops{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+  .top{background:var(--crema);border:3px solid #f3e6d3;border-radius:22px;padding:16px 24px;text-align:center;font-weight:900;transition:.2s;min-width:150px}
+  .top:hover{transform:scale(1.08) rotate(-3deg);border-color:var(--naranja);background:#fff4e6}
+  .top .e{display:block;font-size:2.4rem}
+  .razones{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px}
+  .razon{text-align:center;padding:26px 18px;background:#fff;border-radius:26px;border:3px solid #f3e6d3;transition:.25s}
+  .razon:hover{transform:translateY(-6px);border-color:var(--verde)}
+  .razon .ic{width:84px;height:84px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font-size:2.4rem;background:#ffe3f0}
+  .razon:nth-child(2) .ic{background:#dff4e3}.razon:nth-child(3) .ic{background:#fff6b8}.razon:nth-child(4) .ic{background:#ffe9d1}
+  .razon h3{font-size:1.15rem;margin-bottom:4px}
+  .razon p{color:var(--suave);font-size:.97rem}
+ 
+  /* ---------- TARJETA FRUTAL ---------- */
+  .tarjeta-sec{background:linear-gradient(135deg,#ffe3f0,#ffe9d1)}
+  .tarjeta{max-width:640px;margin-inline:auto;background:#fff;border-radius:30px;padding:30px 26px;text-align:center;box-shadow:0 18px 44px rgba(0,0,0,.12);border:4px dashed var(--rosa)}
+  .sellos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}
+  .sello-slot{aspect-ratio:1/1;border-radius:50%;border:4px dashed #ddd;background:#fafafa;font-size:2.6rem;display:grid;place-items:center;cursor:pointer;transition:.2s;color:#ccc;font-weight:900}
+  .sello-slot:hover{transform:scale(1.07)}
+  .sello-slot.lleno{border:4px solid var(--rosa);background:#fff0f7;color:inherit;animation:pop .35s}
+  @keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+  .tarjeta small{color:var(--suave)}
+ 
+  /* ---------- CÓMO PEDIR ---------- */
+  .como{background:var(--amarillo)}
+  .pasos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;counter-reset:p;margin-top:10px}
+  .pasoc{background:#fff;border-radius:26px;padding:34px 22px 26px;text-align:center;position:relative;box-shadow:0 10px 0 rgba(0,0,0,.08)}
+  .pasoc::before{counter-increment:p;content:counter(p);position:absolute;top:-22px;left:50%;translate:-50% 0;width:48px;height:48px;border-radius:50%;background:var(--rosa);color:#fff;display:grid;place-items:center;font-family:'Caveat Brush',cursive;font-size:1.9rem;box-shadow:0 5px 0 var(--rosa-osc)}
+  .pasoc .e{font-size:2.8rem}
+  .pasoc h3{margin:6px 0 4px}
+  .pasoc p{color:var(--suave);font-size:.96rem}
+ 
+  /* ---------- UBICACIÓN ---------- */
+  .ubic{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch}
+  .mapa{border-radius:30px;background:linear-gradient(135deg,#dff4e3,#fff6b8);display:grid;place-items:center;text-align:center;padding:30px;border:3px solid #f3e6d3;min-height:280px}
+  .mapa .pin{font-size:4.5rem;animation:flota 3s ease-in-out infinite}
+  .horario{background:#fff;border-radius:30px;padding:28px;border:3px solid #f3e6d3}
+  .horario h3{font-family:'Caveat Brush',cursive;font-weight:400;font-size:2rem;color:var(--rosa);margin-bottom:10px}
+  .horario table{width:100%;border-collapse:collapse}
+  .horario td{padding:8px 4px;border-bottom:2px dashed #f0e4d2;font-weight:700}
+  .horario td:last-child{text-align:right;color:var(--suave)}
+  .horario tr.hoy td{color:var(--rosa);font-weight:900}
+  .horario p{margin-top:14px;font-weight:700}
+ 
+  /* ---------- CLUB ---------- */
+  .club{background:var(--verde);color:#fff;text-align:center;border-radius:36px;padding:48px 24px}
+  .club h2{color:#fff}
+  .club h2 span{color:var(--amarillo)}
+  .club p{max-width:50ch;margin:12px auto 22px}
+  .club form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .club input{border:0;border-radius:999px;padding:14px 22px;font:inherit;font-weight:700;min-width:min(300px,100%)}
+ 
+  /* ---------- FAQ ---------- */
+  .faq{max-width:780px;margin-inline:auto}
+  details{background:#fff;border:3px solid #f3e6d3;border-radius:20px;margin-bottom:14px;padding:4px 22px;transition:.2s}
+  details[open]{border-color:var(--rosa)}
+  summary{cursor:pointer;font-weight:900;padding:14px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-size:1.7rem;color:var(--rosa);transition:.2s}
+  details[open] summary::after{rotate:45deg}
+  details p{padding:0 0 16px;color:var(--suave)}
+ 
+  /* ---------- CTA / FOOTER ---------- */
+  .cta-sec{padding-top:20px}
+  .cta{background:var(--rosa);color:#fff;text-align:center;border-radius:40px;padding:64px 24px;position:relative;overflow:hidden}
+  .cta::before,.cta::after{content:"🍓🍍🍉🥭🍎🍈";position:absolute;font-size:2.4rem;letter-spacing:22px;opacity:.18;white-space:nowrap;left:-20px}
+  .cta::before{top:14px}.cta::after{bottom:14px;left:auto;right:-20px}
+  .cta h2{color:#fff;position:relative}
+  .cta h2 span{color:var(--amarillo)}
+  .cta p{margin:14px auto 28px;max-width:52ch;opacity:.96;position:relative}
+  .cta .btn{position:relative}
+  .redes{position:relative;display:flex;justify-content:center;gap:12px;margin-top:26px;flex-wrap:wrap}
+  .redes a{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.6);padding:8px 20px;border-radius:999px;font-weight:900;transition:.2s}
+  .redes a:hover{background:#fff;color:var(--rosa)}
+  footer{background:var(--tinta);color:#ddd;padding:40px 0 90px;text-align:center}
+  footer .marca{color:#fff;font-size:2.5rem}
+  footer p{margin-top:6px;font-size:.95rem}
+ 
+  /* ---------- CARRITO ---------- */
+  #velo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:70;opacity:0;pointer-events:none;transition:.3s}
+  #velo.on{opacity:1;pointer-events:auto}
+  #drawer{position:fixed;top:0;right:0;height:100%;width:min(420px,100%);background:var(--crema);z-index:75;transform:translateX(105%);transition:transform .35s ease;display:flex;flex-direction:column;box-shadow:-10px 0 30px rgba(0,0,0,.25)}
+  #drawer.on{transform:none}
+  .dr-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;background:var(--rosa);color:#fff}
+  .dr-head h3{font-family:'Caveat Brush',cursive;font-weight:400;font-size:2rem}
+  .dr-head button{background:rgba(255,255,255,.25);border:0;color:#fff;width:38px;height:38px;border-radius:50%;font-size:1.3rem;cursor:pointer}
+  #items{flex:1;overflow:auto;padding:16px 20px}
+  .vacio{text-align:center;color:var(--suave);padding:40px 10px}
+  .vacio span{font-size:3.4rem;display:block}
+  .item{background:#fff;border:3px solid #f3e6d3;border-radius:18px;padding:12px 14px;margin-bottom:12px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+  .item .e{font-size:2.2rem}
+  .item b{display:block;line-height:1.2}
+  .item small{color:var(--suave)}
+  .item .q{display:flex;align-items:center;gap:6px}
+  .item .q button{width:28px;height:28px;border-radius:50%;border:0;background:var(--verde);color:#fff;font-weight:900;cursor:pointer}
+  .item .q button.x{background:#e0e0e0;color:#555}
+  .dr-pie{padding:18px 22px;background:#fff;border-top:3px solid #f3e6d3}
+  .total{display:flex;justify-content:space-between;font-weight:900;font-size:1.2rem;margin-bottom:12px}
+  .dr-pie .btn{display:block;width:100%}
+  .dr-pie .limpiar{background:none;border:0;color:var(--suave);text-decoration:underline;cursor:pointer;margin:12px auto 0;display:block;font-weight:700}
+ 
+  /* ---------- FLOTANTES ---------- */
+  .wa-flota{position:fixed;right:18px;bottom:18px;z-index:30;display:flex;align-items:center;gap:10px;background:#25d366;color:#fff;font-weight:900;padding:14px 22px;border-radius:999px;box-shadow:0 8px 22px rgba(0,0,0,.28);animation:pulso 2.4s infinite}
+  .wa-flota span{font-size:1.5rem;line-height:1}
+  @keyframes pulso{0%{box-shadow:0 0 0 0 rgba(37,211,102,.6),0 8px 22px rgba(0,0,0,.28)}70%{box-shadow:0 0 0 18px rgba(37,211,102,0),0 8px 22px rgba(0,0,0,.28)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0),0 8px 22px rgba(0,0,0,.28)}}
+  #arriba{position:fixed;left:18px;bottom:18px;z-index:30;width:50px;height:50px;border-radius:50%;border:0;background:var(--tinta);color:#fff;font-size:1.4rem;cursor:pointer;opacity:0;pointer-events:none;transition:.3s;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+  #arriba.on{opacity:1;pointer-events:auto}
+  .confeti{position:fixed;z-index:90;pointer-events:none;font-size:1.8rem;animation:vuela 1s ease-out forwards}
+  @keyframes vuela{from{opacity:1;transform:translate(0,0) scale(.6)}to{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r)) scale(1.3)}}
+  #toast{position:fixed;left:50%;bottom:90px;translate:-50% 20px;background:var(--tinta);color:#fff;padding:12px 24px;border-radius:999px;font-weight:800;z-index:85;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
+  #toast.on{opacity:1;translate:-50% 0}
+ 
+  @media (max-width:860px){
+    .hero .wrap,.constructor,.ubic{grid-template-columns:1fr}
+    .hero .wrap{text-align:center}
+    .hero p.lead{margin-inline:auto}
+    .acciones,.stats{justify-content:center}
+    .logo-box{order:-1}
+    #hamb{display:block}
+    nav ul{display:none;position:absolute;left:0;right:0;top:100%;background:var(--crema);flex-direction:column;padding:16px 6%;gap:14px;border-bottom:3px solid #f3e6d3}
+    nav ul.on{display:flex}
+    .resumen{position:static}
+    .wa-flota b{display:none}.wa-flota{padding:14px 16px}
+    .nav-der .btn.pedir{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+ 
+<div id="progreso"></div>
+<div class="aviso">🍓 Fruta fresca cortada al momento · <b>¡Arma tu pedido y envíalo por WhatsApp!</b> 🍍</div>
+ 
+<header>
+  <div class="wrap">
+    <nav>
+      <a href="#inicio" class="marca">Fruti<b>Snacks</b></a>
+      <ul id="menu-nav">
+        <li><a href="#menu">Sabores</a></li>
+        <li><a href="#arma">Arma tu vaso</a></li>
+        <li><a href="#combos">Combos</a></li>
+        <li><a href="#quiz">Juegos</a></li>
+        <li><a href="#donde">Dónde estamos</a></li>
+      </ul>
+      <div class="nav-der">
+        <button class="btn" id="btn-cart" aria-label="Abrir carrito">🛒 Carrito<span id="badge">0</span></button>
+        <button id="hamb" aria-label="Menú">☰</button>
+      </div>
+    </nav>
+  </div>
+</header>
+ 
+<!-- ================= HERO ================= -->
+<section class="hero" id="inicio" style="padding-bottom:120px">
+  <span class="fruta-flota f1">🍓</span><span class="fruta-flota f2">🍋</span><span class="fruta-flota f3">🍍</span>
+  <span class="fruta-flota f4">🍎</span><span class="fruta-flota f5">🍉</span><span class="fruta-flota f6">🥭</span>
+  <div class="wrap">
+    <div>
+      <div class="abierto" id="estado"><i></i><span>Revisando horario…</span></div>
+      <h1>Porque la vida es mejor <span>con fruta…</span> <mark>¡y sin culpa!</mark></h1>
+      <p class="lead">Vasos de fruta fresca, jugosa y bien cortadita. Elige tu sabor, ponle tu topping favorito, agrégalo al carrito y listo.</p>
+      <div class="acciones">
+        <a href="#arma" class="btn grande">Arma tu vaso 🍓</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b data-cuenta="5">0</b><span>sabores</span></div>
+        <div class="stat"><b data-cuenta="5">0</b><span>toppings</span></div>
+        <div class="stat"><b data-cuenta="3">0</b><span>combos</span></div>
+        <div class="stat"><b data-cuenta="100" data-suf="%">0</b><span>fruta fresca</span></div>
+      </div>
+    </div>
+    <div class="logo-box">
+      <!-- Coloca tu logo en la misma carpeta con el nombre logo.png -->
+      <img src="logo.png" alt="Logo de FrutiSnacks" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <div class="logo-fallback">Fruti<b>Snacks</b></div>
+      <div class="sello"><span><b>Fresca</b>todos<br>los días</span></div>
+    </div>
+  </div>
+  <div class="ola"><svg viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#fffaf3" d="M0,40 C240,90 480,0 720,30 C960,60 1200,90 1440,25 L1440,70 L0,70 Z"/></svg></div>
+</section>
+ 
+<div class="cinta" aria-hidden="true">
+  <div>
+    <span>🍎 Manzana</span><span>🍈 Melón</span><span>🍍 Piña</span><span>🍉 Sandía</span><span>🥭 Mango con chile</span><span>🍓 Fresca todos los días</span><span>🥤 Para llevar</span>
+    <span>🍎 Manzana</span><span>🍈 Melón</span><span>🍍 Piña</span><span>🍉 Sandía</span><span>🥭 Mango con chile</span><span>🍓 Fresca todos los días</span><span>🥤 Para llevar</span>
+  </div>
+</div>
+ 
+<!-- ================= VASOS ================= -->
+<section class="galeria" id="vasos">
+  <div class="wrap">
+    <h2 class="reveal">Nuestros <span>vasos de fruta</span></h2>
+    <p class="sub reveal">Colores que se te antojan, sabor que enamora. Toca la foto para verla en grande.</p>
+    <div class="marco reveal">
+      <div class="cinta-pegada">¡Se te va a antojar!</div>
+      <!-- Coloca la foto de los vasos en la misma carpeta con el nombre vasos.png -->
+      <img src="vasos.png" alt="Vasos de fruta FrutiSnacks: manzana, melón, piña, sandía y mango con chile" id="foto-vasos">
+    </div>
+  </div>
+</section>
+<div id="lightbox"><img src="vasos.png" alt="Vasos de fruta FrutiSnacks"></div>
+ 
+<!-- ================= SABORES ================= -->
+<section class="menu" id="menu">
+  <div class="wrap">
+    <h2 class="reveal">Elige tu <span>sabor</span></h2>
+    <p class="sub reveal">Escoge el tamaño y agrégalo a tu carrito. ¡Puedes mezclar los que quieras!</p>
+    <div class="grid" id="tarjetas"></div>
+  </div>
+</section>
+ 
+<!-- ================= ARMA TU VASO ================= -->
+<section class="arma" id="arma">
+  <div class="wrap">
+    <h2 class="reveal">Arma <span>tu vaso</span></h2>
+    <p class="sub reveal">Personalízalo con toppings, agrégalo al carrito y arma un pedido con todos los vasos que quieras.</p>
+    <div class="constructor reveal">
+      <div class="panel">
+        <div class="paso">
+          <h3><i>1</i>Elige tu fruta</h3>
+          <div class="opciones" id="op-fruta"></div>
+        </div>
+        <div class="paso">
+          <h3><i>2</i>Ponle toppings</h3>
+          <div class="opciones" id="op-top"></div>
+        </div>
+        <div class="paso">
+          <h3><i>3</i>Tamaño</h3>
+          <div class="opciones" id="op-tam"></div>
+        </div>
+        <div class="paso">
+          <h3><i>4</i>¿Cuántos vasos?</h3>
+          <div class="cantidad">
+            <button type="button" id="menos" aria-label="Menos">−</button>
+            <output id="cant">1</output>
+            <button type="button" id="mas" aria-label="Más">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel resumen">
+        <div class="gran" id="gran">🍉</div>
+        <h3>Tu vaso</h3>
+        <p id="texto-pedido"></p>
+        <button class="btn grande" id="agregar" style="width:100%">Agregar al carrito 🛒</button>
+        <a class="btn wa" id="enviar" target="_blank" rel="noopener">Pedir solo este por WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= COMBOS ================= -->
+<section class="combos" id="combos">
+  <div class="wrap">
+    <h2 class="reveal">Combos <span>para compartir</span></h2>
+    <p class="sub reveal">Más fruta, más sonrisas. Pregunta por el precio de cada combo.</p>
+    <div class="grid">
+      <article class="combo c1 reveal"><span class="tag">POPULAR</span><div class="big">🍓🍓</div><h3>Combo Dúo</h3><ul><li>2 vasos a tu elección</li><li>Toppings incluidos</li><li>Ideal para ir en pareja</li></ul><button class="btn add-combo" data-nombre="Combo Dúo (2 vasos)" data-e="🍓">Agregar combo</button></article>
+      <article class="combo c2 reveal"><span class="tag">FAMILIAR</span><div class="big">🍍🍉🥭</div><h3>Combo Familiar</h3><ul><li>4 vasos a tu elección</li><li>Toppings incluidos</li><li>Para toda la familia</li></ul><button class="btn add-combo" data-nombre="Combo Familiar (4 vasos)" data-e="🍍">Agregar combo</button></article>
+      <article class="combo c3 reveal"><span class="tag">EQUIPO</span><div class="big">🍎🍈🍍🍉</div><h3>Combo Fiesta</h3><ul><li>6 vasos a tu elección</li><li>Perfecto para la oficina o reuniones</li><li>Pídelo con anticipación</li></ul><button class="btn add-combo" data-nombre="Combo Fiesta (6 vasos)" data-e="🎉">Agregar combo</button></article>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= QUIZ ================= -->
+<section class="quiz" id="quiz">
+  <div class="wrap">
+    <h2 class="reveal">¿Qué fruta <span>eres?</span></h2>
+    <p class="sub reveal">Responde 4 preguntas y descubre tu vaso ideal.</p>
+    <div class="quiz-box reveal">
+      <div class="quiz-prog"><div id="q-prog"></div></div>
+      <div id="q-cuerpo"></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= RULETA ================= -->
+<section class="ruleta" id="ruleta">
+  <div class="wrap">
+    <h2 class="reveal">¿No sabes qué <span>pedir?</span></h2>
+    <p class="sub reveal">Deja que la suerte elija tu fruta, tu topping y tu tamaño.</p>
+    <div class="tragamonedas reveal">
+      <div class="slot" id="s1">🍓</div>
+      <div class="slot" id="s2">🍋</div>
+      <div class="slot" id="s3">🥤</div>
+    </div>
+    <div class="ruleta-res" id="r-res">Presiona el botón y prueba tu suerte 🎰</div>
+    <div class="ruleta-btns">
+      <button class="btn grande" id="girar">¡Girar! 🎰</button>
+      <button class="btn verde grande" id="r-add" style="display:none">Agregar al carrito</button>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= DATOS FRUTALES ================= -->
+<section id="datos">
+  <div class="wrap">
+    <h2 class="reveal">Datos <span>frutales</span></h2>
+    <p class="sub reveal">Pequeñas curiosidades sobre lo que comes.</p>
+    <div class="datos-box reveal">
+      <div id="datos-lista"></div>
+      <div class="puntos" id="datos-puntos"></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= TOPPINGS ================= -->
+<section class="toppings" id="toppings">
+  <div class="wrap">
+    <h2 class="reveal">Dale tu <span>toque especial</span></h2>
+    <p class="sub reveal">Combina tu fruta con estos extras y descubre tu mezcla favorita.</p>
+    <div class="tops">
+      <div class="top reveal"><span class="e">🍋</span>Limón</div>
+      <div class="top reveal"><span class="e">🧂</span>Sal</div>
+      <div class="top reveal"><span class="e">🌶️</span>Chile</div>
+      <div class="top reveal"><span class="e">🍯</span>Chamoy</div>
+      <div class="top reveal"><span class="e">🐝</span>Miel</div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= POR QUÉ ================= -->
+<section id="porque">
+  <div class="wrap">
+    <h2 class="reveal">¿Por qué <span>FrutiSnacks</span>?</h2>
+    <p class="sub reveal">Porque comer rico y sentirte bien sí van de la mano.</p>
+    <div class="razones">
+      <div class="razon reveal"><div class="ic">🍓</div><h3>Fruta fresca</h3><p>Seleccionamos fruta de calidad y la cortamos el mismo día.</p></div>
+      <div class="razon reveal"><div class="ic">🥗</div><h3>Snack sin culpa</h3><p>Una opción ligera y natural para cualquier hora del día.</p></div>
+      <div class="razon reveal"><div class="ic">🥤</div><h3>Listo para llevar</h3><p>Vasos prácticos y bien sellados para que disfrutes donde quieras.</p></div>
+      <div class="razon reveal"><div class="ic">🎨</div><h3>Tú lo personalizas</h3><p>Elige tus toppings y tamaño: cada vaso queda a tu gusto.</p></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= TARJETA FRUTAL ================= -->
+<section class="tarjeta-sec" id="tarjeta">
+  <div class="wrap">
+    <h2 class="reveal">Tu tarjeta <span>frutal</span></h2>
+    <p class="sub reveal">Toca los círculos para ir sellando tu tarjeta. Pregunta en el local por tu beneficio al completarla.</p>
+    <div class="tarjeta reveal">
+      <h3 class="brush" style="font-family:'Caveat Brush',cursive;font-weight:400;font-size:2rem;color:var(--rosa)">Tarjeta FrutiSnacks</h3>
+      <div class="sellos" id="sellos"></div>
+      <small id="sellos-txt">Llevas 0 de 6 sellos</small>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= CÓMO PEDIR ================= -->
+<section class="como" id="como">
+  <div class="wrap">
+    <h2 class="reveal">Pedir es <span>facilísimo</span></h2>
+    <p class="sub reveal" style="color:#555">En tres pasos tienes tu vaso listo.</p>
+    <div class="pasos">
+      <div class="pasoc reveal"><div class="e">🍉</div><h3>Elige tu vaso</h3><p>Agrega al carrito los vasos y combos que se te antojen.</p></div>
+      <div class="pasoc reveal"><div class="e">💬</div><h3>Envíanos el mensaje</h3><p>Con un clic se abre WhatsApp con todo tu pedido ya escrito.</p></div>
+      <div class="pasoc reveal"><div class="e">😋</div><h3>¡A disfrutar!</h3><p>Pasa por tu pedido fresquecito y listo para comer.</p></div>
+    </div>
+  </div>
+</section>
+ <!-- ================= DÓNDE ESTAMOS ================= -->
+<section id="donde">
+  <div class="wrap">
+    <h2 class="reveal">Dónde <span>estamos</span></h2>
+    <p class="sub reveal">Ven a visitarnos, ¡te esperamos con fruta fresca!</p>
+    <div class="ubic">
+      <div class="mapa reveal">
+        <div>
+          <div class="pin">📍</div>
+          <h3 style="margin:8px 0 4px" id="dir-txt">Tu dirección aquí</h3>
+          <p style="color:var(--suave);margin-bottom:16px">San Marcos, San Salvador</p>
+          <a class="btn verde" id="btn-mapa" target="_blank" rel="noopener">Cómo llegar</a>
+        <!-- CAMBIA ESTA LÍNEA DENTRO DE <div class="ubic-box"> -->
+         <a href="https://maps.google.com/?q=Complejo+Educativo+Ignacio+Pacheco+San+Marcos+El+Salvador" target="_blank" rel="noopener" class="btn verde btn-mapa" id="btn-mapa">
+  Cómo llegar
+</a>
+        </div>
+      </div>
+      <div class="horario reveal">
+        <h3>Numero de contacto </h3>
+        <table id="tabla-horario"></table>
+        <p>📞 <span id="tel-txt"> 6831-3419</span></p>
+        <!-- PEGAR EN LA LÍNEA 589 (Debajo del número de teléfono) -->
+<div style="text-align: center; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #ddd;">
+  <p style="font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; color: #333;">¡Escanea para abrir en tu celular!</p>
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://127.0.0.1:5500/index.html" alt="Código QR" style="width: 130px; height: 130px; border-radius: 8px;">
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= CLUB ================= -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="club reveal">
+      <h2>Únete al <span>club frutal</span></h2>
+      <p>Déjanos tu nombre y te avisamos de promociones y novedades por WhatsApp.</p>
+      <form id="form-club">
+        <input type="text" id="club-nombre" placeholder="Tu nombre" required>
+        <button class="btn blanco" type="submit">¡Quiero unirme!</button>
+      </form>
+    </div>
+  </div>
+</section>
+ 
+<!-- ================= CTA ================= -->
+<section class="cta-sec" id="pedidos">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>¿Se te antojó? <span>¡Pide ya!</span></h2>
+      <p>Escríbenos y cuéntanos qué sabor se te antoja. Te lo preparamos fresquecito.</p>
+      <a class="btn blanco grande wa-link" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+      <div class="redes">
+        </div>
+    </div>
+  </div>
+</section>
+ 
+<footer>
+  <div class="marca">Fruti<b style="color:var(--rosa);font-weight:400">Snacks</b></div>
+  <p>Porque la vida es mejor con fruta… ¡y sin culpa! ❤️</p>
+  <p>© 2026 FrutiSnacks. Todos los derechos reservados.</p>
+</footer>
+ 
+<!-- ================= CARRITO ================= -->
+<div id="velo"></div>
+<aside id="drawer" aria-label="Carrito de pedido">
+  <div class="dr-head"><h3>Tu pedido 🛒</h3><button id="cerrar-cart" aria-label="Cerrar">✕</button></div>
+  <div id="items"></div>
+  <div class="dr-pie">
+    <div class="total" id="total-fila" style="display:none"><span>Total</span><span id="total">$0.00</span></div>
+    <a class="btn wa grande" id="enviar-cart" target="_blank" rel="noopener">Enviar pedido por WhatsApp</a>
+    <button class="limpiar" id="vaciar">Vaciar carrito</button>
+  </div>
+</aside>
+ 
+<a class="wa-flota wa-link" target="_blank" rel="noopener" aria-label="Pedir por WhatsApp"><span>💬</span><b>¡Pide aquí!</b></a>
+<button id="arriba" aria-label="Volver arriba">↑</button>
+<div id="toast"></div>
+ 
+<script>
+/* =========================================================
+   CONFIGURACIÓN: cambia estos datos por los de tu negocio
+   ========================================================= */
+const CONFIG = {
+  whatsapp: "50368313419",              // con código de país, sin + ni espacios
+  telefono: "6831-3419",
+  direccion: "Complejo Educativo Ignacio Pacheco",
+  mapurl: "https://www.google.com/maps/search/?api=1&query=Complejo+Educativo+Ignacio+Pacheco+San+Marcos+El+Salvador",
+  // Precios por tamaño. Déjalos en 0 si aún no quieres mostrarlos.
+  precios: { "pequeño": 1.00, "mediano": 1.00, "grande": 1.00 },
+  extraTopping: 0,                      // costo extra por topping (0 = incluido)
+  // Horario: 0 = domingo ... 6 = sábado. null = cerrado ese día. [abre, cierra] en formato 24 h
+  horario: {0:[9,19],1:[9,19],2:[9,19],3:[9,19],4:[9,19],5:[9,19],6:[9,19]}
+};
+ 
+const FRUTAS = [
+  {id:"manzana", n:"Manzana", e:"🍎", cls:"manzana", d:"Rodajas crujientes y dulces, listas para morder.", t:"Crujiente"},
+  {id:"melon",   n:"Melón",   e:"🍈", cls:"melon",   d:"Cubitos suaves, frescos y súper jugosos.", t:"Refrescante"},
+  {id:"pina",    n:"Piña",    e:"🍍", cls:"pina",    d:"Trozos dorados con el toque dulce y ácido perfecto.", t:"Tropical"},
+  {id:"sandia",  n:"Sandía",  e:"🍉", cls:"sandia",  d:"Cubos rojos, fríos y llenos de frescura.", t:"Favorita"},
+  {id:"mango",   n:"Mango con chile", e:"🥭", cls:"mango", d:"Mango con chile y chamoy para los que aman el sabor intenso.", t:"¡Con sabor!"}
+];
+const TOPPINGS = [
+  {v:"limón", e:"🍋", n:"Limón"},{v:"sal", e:"🧂", n:"Sal"},{v:"chile en polvo", e:"🌶️", n:"Chile"},
+  {v:"chamoy", e:"🍯", n:"Chamoy"},{v:"miel", e:"🐝", n:"Miel"}
+];
+const TAMANOS = ["pequeño","mediano","grande"];
+const DATOS = [
+  {e:"🍉", t:"Sandía", p:"Alrededor del 90 % de su peso es agua, por eso es tan refrescante en los días de calor."},
+  {e:"🍍", t:"Piña", p:"Contiene bromelina, una enzima natural que ayuda a descomponer las proteínas."},
+  {e:"🍈", t:"Melón", p:"Es una buena fuente de vitamina C y tiene un sabor suave y dulce."},
+  {e:"🍎", t:"Manzana", p:"Aporta fibra, y gran parte de ella está en la cáscara. ¡No la desprecies!"},
+  {e:"🥭", t:"Mango", p:"Aporta vitaminas A y C, y combina de maravilla con el toque picosito del chile."}
+];
+ 
+/* ---------- Utilidades ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const wa = txt => "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(txt);
+const hayPrecios = Object.values(CONFIG.precios).some(p => p > 0);
+const dinero = n => CONFIG.moneda + n.toFixed(2);
+const unaDe = a => a[Math.floor(Math.random() * a.length)];
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 2200); }
+function confeti(el){
+  const r = el.getBoundingClientRect(), cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const lista = ["🍓","🍍","🍉","🥭","🍎","🍈","✨"];
+  for (let i = 0; i < 10; i++){
+    const s = document.createElement("span");
+    s.className = "confeti"; s.textContent = unaDe(lista);
+    s.style.left = cx + "px"; s.style.top = cy + "px";
+    s.style.setProperty("--dx", (Math.random()*240 - 120) + "px");
+    s.style.setProperty("--dy", (-60 - Math.random()*150) + "px");
+    s.style.setProperty("--r", (Math.random()*360 - 180) + "deg");
+    document.body.appendChild(s); setTimeout(() => s.remove(), 1000);
+  }
+}
+ 
+/* ---------- Enlaces generales ---------- */
+$$(".wa-link").forEach(a => a.href = wa("Hola FrutiSnacks Quiero hacer un pedido."));
+$("#dir-txt").textContent = CONFIG.direccion;
+$("#tel-txt").textContent = CONFIG.telefono;
+$("#btn-mapa").href = CONFIG.mapaUrl;
+ 
+/* ---------- Carrito ---------- */
+let carrito = [];
+try { carrito = JSON.parse(localStorage.getItem("fs-carrito") || "[]"); } catch(e){}
+function guardar(){ try { localStorage.setItem("fs-carrito", JSON.stringify(carrito)); } catch(e){} }
+function precioUnit(it){
+  if (!hayPrecios || it.combo) return 0;
+  return (CONFIG.precios[it.tam] || 0) + it.tops.length * CONFIG.extraTopping;
+}
+function lineaTexto(it){
+  if (it.combo) return it.qty + " x " + it.nombre;
+  const tops = it.tops.length ? " con " + it.tops.join(", ") : "";
+  return it.qty + " x " + it.nombre + " (" + it.tam + ")" + tops;
+}
+function agregar(item, origen){
+  const clave = JSON.stringify([item.nombre, item.tam || "", [...item.tops].sort()]);
+  const ya = carrito.find(c => c.clave === clave);
+  if (ya) ya.qty += item.qty; else carrito.push({...item, clave});
+  guardar(); pintarCarrito(); toast("¡Agregado al carrito! 🛒");
+  if (origen) confeti(origen);
+}
+function pintarCarrito(){
+  const cont = $("#items");
+  const n = carrito.reduce((s, c) => s + c.qty, 0);
+  $("#badge").textContent = n;
+  if (!carrito.length){
+    cont.innerHTML = '<div class="vacio"><span>🍓</span>Tu carrito está vacío.<br>¡Agrega tu primer vaso!</div>';
+    $("#total-fila").style.display = "none";
+    $("#enviar-cart").style.opacity = ".5";
+    $("#enviar-cart").removeAttribute("href");
+    return;
+  }
+  cont.innerHTML = carrito.map((c, i) => `
+    <div class="item">
+      <div class="e">${c.e}</div>
+      <div><b>${c.nombre}</b><small>${c.combo ? "Combo" : c.tam + (c.tops.length ? " · " + c.tops.join(", ") : " · sin toppings")}</small>
+      ${hayPrecios && !c.combo ? `<small><br>${dinero(precioUnit(c) * c.qty)}</small>` : ""}</div>
+      <div class="q"><button data-i="${i}" data-a="-">−</button><b>${c.qty}</b><button data-i="${i}" data-a="+">+</button><button class="x" data-i="${i}" data-a="x">✕</button></div>
+    </div>`).join("");
+  const total = carrito.reduce((s, c) => s + precioUnit(c) * c.qty, 0);
+  $("#total-fila").style.display = hayPrecios ? "flex" : "none";
+  $("#total").textContent = dinero(total);
+  let msg = "Hola FrutiSnacks 👋 Quiero hacer este pedido:\n\n" + carrito.map(c => "• " + lineaTexto(c)).join("\n");
+  if (hayPrecios) msg += "\n\nTotal: " + dinero(total);
+  $("#enviar-cart").style.opacity = "1";
+  $("#enviar-cart").href = wa(msg);
+}
+$("#items").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const i = +b.dataset.i, a = b.dataset.a;
+  if (a === "+") carrito[i].qty++;
+  else if (a === "-"){ carrito[i].qty--; if (carrito[i].qty < 1) carrito.splice(i, 1); }
+  else carrito.splice(i, 1);
+  guardar(); pintarCarrito();
+});
+$("#vaciar").onclick = () => { carrito = []; guardar(); pintarCarrito(); };
+const abrirCart = () => { $("#drawer").classList.add("on"); $("#velo").classList.add("on"); };
+const cerrarCart = () => { $("#drawer").classList.remove("on"); $("#velo").classList.remove("on"); };
+$("#btn-cart").onclick = abrirCart; $("#cerrar-cart").onclick = cerrarCart; $("#velo").onclick = cerrarCart;
+document.addEventListener("keydown", e => { if (e.key === "Escape"){ cerrarCart(); $("#lightbox").classList.remove("on"); } });
+ 
+/* ---------- Tarjetas de sabores ---------- */
+$("#tarjetas").innerHTML = FRUTAS.map(f => `
+  <article class="card reveal">
+    <div class="foto ${f.cls}">${f.e}</div>
+    <h3>${f.n}</h3><p>${f.d}</p><span class="etq">${f.t}</span>
+    <div class="precio" data-precio></div>
+<select aria-label="Tamaño de ${f.n}">${TAMANOS.map(t => `<option value="${t}" ${t==="mediano"?"selected":""}>${t[0].toUpperCase()+t.slice(1)} · $${CONFIG.precios[t].toFixed(2)}</option>`).join('')}</select>    <button class="btn chico" data-id="${f.id}">Agregar 🛒</button>
+  </article>`).join("");
+$("#tarjetas").addEventListener("click", e => {
+  const b = e.target.closest("button[data-id]"); if (!b) return;
+  const f = FRUTAS.find(x => x.id === b.dataset.id);
+  const tam = b.parentElement.querySelector("select").value;
+  agregar({nombre:f.n, e:f.e, tam, tops:[], qty:1}, b);
+});
+ 
+/* ---------- Combos ---------- */
+$$(".add-combo").forEach(b => b.onclick = () => agregar({nombre:b.dataset.nombre, e:b.dataset.e, combo:true, tam:"", tops:[], qty:1}, b));
+ 
+/* ---------- Armador ---------- */
+let cant = 1;
+$("#op-fruta").innerHTML = FRUTAS.map((f, i) => `<input type="radio" name="fruta" id="f-${f.id}" value="${f.n}" data-e="${f.e}" ${f.id==="sandia"?"checked":""}><label for="f-${f.id}">${f.e} ${f.n}</label>`).join("");
+$("#op-top").innerHTML = TOPPINGS.map(t => `<input type="checkbox" id="t-${t.n}" value="${t.v}"><label for="t-${t.n}">${t.e} ${t.n}</label>`).join("");
+$("#op-tam").innerHTML = TAMANOS.map(t => `<input type="radio" name="tam" id="s-${t}" value="${t}" ${t==="mediano"?"checked":""}><label for="s-${t}">${t.charAt(0).toUpperCase() + t.slice(1)} · ${CONFIG.precios[t].toFixed(2)}</label>`).join('');function armado(){
+  const f = document.querySelector('input[name="fruta"]:checked');
+  return { nombre:f.value, e:f.dataset.e, tam:document.querySelector('input[name="tam"]:checked').value,
+           tops:$$('#op-top input:checked').map(i => i.value), qty:cant };
+}
+function actualizar(){
+  const it = armado();
+  $("#gran").textContent = it.e; $("#cant").textContent = cant;
+  const resumen = lineaTexto(it) + (it.tops.length ? "" : " sin toppings") + ".";
+  $("#texto-pedido").textContent = resumen;
+  $("#enviar").href = wa("Hola FrutiSnacks 👋 Quiero " + resumen);
+}
+$$("#arma input").forEach(i => i.addEventListener("change", actualizar));
+$("#mas").onclick = () => { if (cant < 20) cant++; actualizar(); };
+$("#menos").onclick = () => { if (cant > 1) cant--; actualizar(); };
+$("#agregar").onclick = e => agregar(armado(), e.currentTarget);
+actualizar();
+ 
+/* ---------- Quiz ---------- */
+const PREGUNTAS = [
+  {q:"¿Cuál sería tu plan ideal?", o:[["Un día de playa ☀️",["sandia","pina"]],["Una aventura extrema 🧗",["mango"]],["Película y cobija 🎬",["manzana"]],["Picnic en el parque 🧺",["melon"]]]},
+  {q:"¿Cómo te describen tus amigos?", o:[["Tranquilo/a y dulce 🕊️",["melon","manzana"]],["Alegre y tropical 🌴",["pina","sandia"]],["Atrevido/a y con chispa 🔥",["mango"]],["Clásico/a y confiable 🤝",["manzana"]]]},
+  {q:"¿Qué textura prefieres?", o:[["Crujiente 🥨",["manzana"]],["Jugosa 💦",["sandia","melon"]],["Dulce con toque ácido 😋",["pina"]],["Con picante 🌶️",["mango"]]]},
+  {q:"¿A qué hora se te antoja más un snack?", o:[["Por la mañana 🌅",["manzana","melon"]],["En la tarde calurosa 🥵",["sandia","pina"]],["En la noche de antojos 🌙",["mango"]],["¡A cualquier hora! ⏰",["pina","manzana"]]]}
+];
+const RESULTADOS = {
+  manzana:"Eres clásico/a, confiable y siempre dejas buena impresión. ¡Un vaso de manzana crujiente es lo tuyo!",
+  melon:"Eres tranquilo/a, dulce y refrescante. El melón va perfecto con tu estilo.",
+  pina:"Eres alegre, tropical y con ese toque ácido que enamora. ¡La piña es tu fruta!",
+  sandia:"Eres la vida de la fiesta: fresco/a, jugoso/a y favorito/a de todos. ¡Sandía para ti!",
+  mango:"Eres atrevido/a y con chispa. ¡Un mango con chile es exactamente tu sabor!"
+};
+let qi = 0, puntos = {};
+function pintarQuiz(){
+  const c = $("#q-cuerpo");
+  if (qi < PREGUNTAS.length){
+    const p = PREGUNTAS[qi];
+    $("#q-prog").style.width = (qi / PREGUNTAS.length * 100) + "%";
+    c.innerHTML = `<h3>${qi+1}/${PREGUNTAS.length} · ${p.q}</h3><div class="quiz-ops">${p.o.map((o, i) => `<button data-i="${i}">${o[0]}</button>`).join("")}</div>`;
+  } else {
+    $("#q-prog").style.width = "100%";
+    const orden = FRUTAS.map(f => f.id);
+    const ganador = orden.reduce((a, b) => (puntos[b]||0) > (puntos[a]||0) ? b : a, orden[0]);
+    const f = FRUTAS.find(x => x.id === ganador);
+    c.innerHTML = `<div class="res-emoji">${f.e}</div><div class="res-nombre">¡Eres ${f.n}!</div><p style="color:var(--suave);max-width:46ch;margin-inline:auto">${RESULTADOS[ganador]}</p>
+      <div class="res-botones"><button class="btn" id="q-add">Agregar mi vaso 🛒</button><button class="btn verde" id="q-otra">Repetir el quiz</button></div>`;
+    $("#q-add").onclick = e => agregar({nombre:f.n, e:f.e, tam:"mediano", tops:[], qty:1}, e.currentTarget);
+    $("#q-otra").onclick = () => { qi = 0; puntos = {}; pintarQuiz(); };
+  }
+}
+$("#q-cuerpo").addEventListener("click", e => {
+  const b = e.target.closest(".quiz-ops button"); if (!b) return;
+  PREGUNTAS[qi].o[+b.dataset.i][1].forEach(id => puntos[id] = (puntos[id]||0) + 1);
+  qi++; pintarQuiz();
+});
+pintarQuiz();
+ 
+/* ---------- Ruleta ---------- */
+let suerte = null;
+$("#girar").onclick = () => {
+  const btn = $("#girar"); btn.disabled = true; $("#r-add").style.display = "none";
+  const slots = [$("#s1"), $("#s2"), $("#s3")];
+  const emojis = [FRUTAS.map(f => f.e), TOPPINGS.map(t => t.e), ["🥤","🧃","🍹"]];
+  slots.forEach(s => s.classList.add("gira"));
+  const fruta = unaDe(FRUTAS), top = unaDe(TOPPINGS), tam = unaDe(TAMANOS);
+  const final = [fruta.e, top.e, {pequeño:"🥤",mediano:"🧃",grande:"🍹"}[tam]];
+  const intervalo = setInterval(() => slots.forEach((s, i) => s.textContent = unaDe(emojis[i])), 90);
+  slots.forEach((s, i) => setTimeout(() => {
+    s.classList.remove("gira"); s.textContent = final[i];
+    if (i === 2){
+      clearInterval(intervalo); btn.disabled = false;
+      suerte = {nombre:fruta.n, e:fruta.e, tam, tops:[top.v], qty:1};
+      $("#r-res").textContent = "¡Te tocó: " + fruta.n + " " + tam + " con " + top.v + "!";
+      $("#r-add").style.display = "inline-block"; btn.textContent = "Girar otra vez 🎰";
+    }
+  }, 1000 + i * 500));
+};
+$("#r-add").onclick = e => { if (suerte) agregar({...suerte, tops:[...suerte.tops]}, e.currentTarget); };
+ 
+/* ---------- Datos frutales ---------- */
+$("#datos-lista").innerHTML = DATOS.map((d, i) => `<div class="dato ${i===0?"on":""}"><div class="e">${d.e}</div><h3>${d.t}</h3><p>${d.p}</p></div>`).join("");
+$("#datos-puntos").innerHTML = DATOS.map((d, i) => `<button class="${i===0?"on":""}" data-i="${i}" aria-label="Dato ${i+1}"></button>`).join("");
+let di = 0, dt;
+function verDato(i){
+  di = i;
+  $$(".dato").forEach((el, k) => el.classList.toggle("on", k === i));
+  $$("#datos-puntos button").forEach((el, k) => el.classList.toggle("on", k === i));
+  clearInterval(dt); dt = setInterval(() => verDato((di + 1) % DATOS.length), 6000);
+}
+$("#datos-puntos").addEventListener("click", e => { const b = e.target.closest("button"); if (b) verDato(+b.dataset.i); });
+verDato(0);
+ 
+/* ---------- Tarjeta frutal ---------- */
+let sellos = 0;
+try { sellos = +localStorage.getItem("fs-sellos") || 0; } catch(e){}
+function pintarSellos(){
+  $("#sellos").innerHTML = Array.from({length:6}, (_, i) => `<button class="sello-slot ${i < sellos ? "lleno" : ""}" data-i="${i}" aria-label="Sello ${i+1}">${i < sellos ? unaDe(["🍓","🍍","🍉","🥭","🍎","🍈"]) : i+1}</button>`).join("");
+  $("#sellos-txt").textContent = sellos >= 6 ? "¡Tarjeta completa! 🎉 Pregunta por tu beneficio en el local." : "Llevas " + sellos + " de 6 sellos";
+}
+$("#sellos").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const i = +b.dataset.i;
+  sellos = (i < sellos) ? i : i + 1;
+  try { localStorage.setItem("fs-sellos", sellos); } catch(err){}
+  pintarSellos(); if (sellos >= 6) confeti(b);
+});
+pintarSellos();
+
+/* ---------- Club ---------- */
+$("#form-club").addEventListener("submit", e => {
+  e.preventDefault();
+  const n = $("#club-nombre").value.trim();
+  window.open(wa("Hola FrutiSnacks 👋 Soy " + n + " y quiero unirme al club frutal para recibir promociones."), "_blank");
+});
+ 
+/* ---------- Navegación, scroll y efectos ---------- */
+$("#hamb").onclick = () => $("#menu-nav").classList.toggle("on");
+$$("#menu-nav a").forEach(a => a.addEventListener("click", () => $("#menu-nav").classList.remove("on")));
+$("#foto-vasos").onclick = () => $("#lightbox").classList.add("on");
+$("#lightbox").onclick = () => $("#lightbox").classList.remove("on");
+$("#arriba").onclick = () => window.scrollTo({top:0, behavior:"smooth"});
+addEventListener("scroll", () => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  $("#progreso").style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
+  $("#arriba").classList.toggle("on", scrollY > 700);
+}, {passive:true});
+ 
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add("on"); io.unobserve(e.target); }
+}), {threshold:.12});
+$$(".reveal").forEach(el => io.observe(el));
+ 
+const conteo = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  const el = e.target, meta = +el.dataset.cuenta, suf = el.dataset.suf || "";
+  let n = 0; const paso = Math.max(1, Math.ceil(meta / 40));
+  const t = setInterval(() => { n = Math.min(meta, n + paso); el.textContent = n + suf; if (n >= meta) clearInterval(t); }, 35);
+  conteo.unobserve(el);
+}));
+$$("[data-cuenta]").forEach(el => conteo.observe(el));
+ 
+pintarCarrito();
+</script>
+</body>
+</html>
+ 
